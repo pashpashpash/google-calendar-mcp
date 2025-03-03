@@ -13,10 +13,10 @@ This is a Model Context Protocol (MCP) server that provides integration with Goo
 
 ## Requirements
 
-1. Node.js 16 or higher
-2. TypeScript 5.3 or higher
-3. A Google Cloud project with the Calendar API enabled
-4. OAuth 2.0 credentials (Client ID and Client Secret)
+- Node.js 16 or higher
+- TypeScript 5.3 or higher
+- A Google Cloud project with the Calendar API enabled
+- OAuth 2.0 credentials (Client ID and Client Secret)
 
 ## Project Structure
 
@@ -33,91 +33,95 @@ google-calendar-mcp/
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com)
 2. Create a new project or select an existing one.
-3. Enable the [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com) for your project. Ensure that the right project is selected from the top bar before enabling the API.
+3. Enable the [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com).
 4. Create OAuth 2.0 credentials:
-   - Go to Credentials
-   - Click "Create Credentials" > "OAuth client ID"
-   - Choose "User data" for the type of data that the app will be accessing
-   - Add your app name and contact information
-   - Add the following scopes (optional):
+   - Go to **Credentials**
+   - Click **"Create Credentials" > "OAuth client ID"**
+   - Choose **"User data"** as the type of data the app will be accessing.
+   - Add your app name and contact information.
+   - Add the following scope (optional):
      - `https://www.googleapis.com/auth/calendar.events`
-   - Select "Desktop app" as the application type
-   - Add your email address as a test user under the [OAuth Consent screen](https://console.cloud.google.com/apis/credentials/consent)
-      - Note: it will take a few minutes for the test user to be added. The OAuth consent will not allow you to proceed until the test user has propogated.
+   - Select **"Desktop app"** as the application type.
+   - Add your email address as a test user under the [OAuth Consent screen](https://console.cloud.google.com/apis/credentials/consent).
+     - **Note:** It may take a few minutes for the test user to propagate.
 
 ## Installation
 
-1. Clone the repository
+1. Clone the repository:
+   ```sh
+   git clone https://github.com/pashpashpash/google-calendar-mcp.git
+   cd google-calendar-mcp
+   ```
 2. Install dependencies:
-   ```bash
+   ```sh
    npm install
    ```
 3. Build the TypeScript code:
-   ```bash
+   ```sh
    npm run build
    ```
-4. Download your Google OAuth credentials from the Google Cloud Console (under "Credentials") and rename the file to `gcp-oauth.keys.json` and place it in the root directory of the project.
+4. Download your Google OAuth credentials from the Google Cloud Console.
+   - Rename the file to `gcp-oauth.keys.json`
+   - Place it in the root directory of the project.
+
+5. Run the server:
+   ```sh
+   node build/index.js
+   ```
 
 ## Available Scripts
 
-- `npm run build` - Build the TypeScript code
-- `npm run build:watch` - Build TypeScript in watch mode for development
-- `npm run dev` - Start the server in development mode using ts-node
-- `npm run auth` - Start the authentication server for Google OAuth flow
+- `npm run build` - Build the TypeScript code.
+- `npm run build:watch` - Build TypeScript in watch mode for development.
+- `npm run dev` - Start the server in development mode using ts-node.
+- `npm run auth` - Start the authentication server for Google OAuth flow.
 
-## Authentication
-
-The server supports both automatic and manual authentication flows:
+## Authentication Setup
 
 ### Automatic Authentication (Recommended)
-1. Place your Google OAuth credentials in a file named `gcp-oauth.keys.json` in the root directory of the project.
+
+1. Ensure your OAuth credentials are in `gcp-oauth.keys.json`
 2. Start the MCP server:
-   ```bash
+   ```sh
    npm start
    ```
-3. If no valid authentication tokens are found, the server will automatically:
-   - Start an authentication server (on ports 3000-3004)
-   - Open a browser window for the OAuth flow
-   - Save the tokens securely once authenticated
-   - Shut down the auth server
-   - Continue normal MCP server operation
-
-The server automatically manages token refresh and re-authentication when needed:
-- Tokens are automatically refreshed before expiration
-- If refresh fails, clear error messages guide you through re-authentication
-- Token files are stored securely with restricted permissions
+3. If no authentication tokens are found, the server will:
+   - Start an authentication server (on ports 3000-3004).
+   - Open a **browser window** for OAuth authentication.
+   - Save the authentication tokens securely.
+   - Shut down the authentication server and continue normal operation.
 
 ### Manual Authentication
-For advanced users or troubleshooting, you can manually run the authentication flow:
-```bash
+
+If you prefer to **manually authenticate**, run:
+```sh
 npm run auth
 ```
-
-This will:
-1. Start the authentication server
-2. Open a browser window for the OAuth flow
-3. Save the tokens and exit
+- This starts an authentication server, opens a browser for OAuth, and saves the tokens.
 
 ### Security Notes
+
 - OAuth credentials are stored in `gcp-oauth.keys.json`
-- Authentication tokens are stored in `.gcp-saved-tokens.json` with 600 permissions
-- Tokens are automatically refreshed in the background
-- Token integrity is validated before each API call
-- The auth server automatically shuts down after successful authentication
-- Never commit OAuth credentials or token files to version control
+- Authentication tokens are stored in `.gcp-saved-tokens.json` with 600 permissions.
+- Tokens **refresh automatically** before expiration.
+- If token refresh fails, you’ll be prompted to re-authenticate.
+- **Never commit OAuth credentials or token files to version control.**
 
 ## Usage
 
-The server exposes the following tools:
-   - `list-calendars`: List all available calendars
-   - `list-events`: List events from a calendar
-   - `create-event`: Create a new calendar event
-   - `update-event`: Update an existing calendar event
-   - `delete-event`: Delete a calendar event
+The server provides the following tools:
+
+| Tool            | Description |
+|----------------|-------------|
+| `list-calendars` | List all available calendars |
+| `list-events`   | List events from a calendar |
+| `create-event`  | Create a new calendar event |
+| `update-event`  | Update an existing calendar event |
+| `delete-event`  | Delete a calendar event |
 
 ## Using with Claude Desktop
 
-1. Add this configuration to your Claude Desktop config file. E.g. `/Users/<user>/Library/Application Support/Claude/claude_desktop_config.json`:
+1. Modify your Claude Desktop config file (e.g., `/Users/<user>/Library/Application Support/Claude/claude_desktop_config.json`):
    ```json
    {
      "mcpServers": {
@@ -128,64 +132,87 @@ The server exposes the following tools:
      }
    }
    ```
+2. Restart Claude Desktop.
 
-2. Restart Claude Desktop
+## Example Use Cases
 
-## Example Usage
+### 📅 Add events from screenshots and images
+```
+Add this event to my calendar based on the attached screenshot.
+```
+✅ **Supported formats**: PNG, JPEG, GIF  
+✅ Extracts details like **date, time, location, description**  
 
-Along with the normal capabilities you would expect for a calendar integration you can also do really dynamic things like add events from screenshots and images and much more.
+### 🔎 Check attendance
+```
+Which events tomorrow have attendees who haven't accepted the invitation?
+```
 
-1. Add events from screenshots and images:
-   ```
-   Add this event to my calendar based on the attached screenshot.
-   ```
-   Supported image formats: PNG, JPEG, GIF
-   Images can contain event details like date, time, location, and description
-   
-2. Check attendance:
-   ```
-   Which events tomorrow have attendees who have not accepted the invitation?
-   ```
-3. Auto coordinate events:
-   ```
-   Here's some available that was provided to me by someone I am interviewing. Take a look at the available times and create an event for me to interview them that is free on my work calendar.
-   ```
-4. Provide your own availability:
-   ```
-   Please provide availability looking at both my personal and work calendar for this upcoming week. Choose times that work well for normal working hours on the East Coast. Meeting time is 1 hour
-   ```
+### 🤖 Auto-schedule meetings
+```
+Here's availability from someone I'm interviewing. Find a time that works on my work calendar.
+```
 
-## Development
+### 📆 Find free time across calendars
+```
+Show my available time slots for next week. Consider both my personal and work calendar.
+```
 
-### Troubleshooting
+## Troubleshooting
 
-Common issues and solutions:
-
-1. OAuth Token expires after one week (7 days)
-   - Apps that are in testing mode, rather than production, will need to go through the OAuth flow again after a week.
-
-3. OAuth Token Errors
-   - Ensure your `gcp-oauth.keys.json` is correctly formatted
-   - Try deleting `.gcp-saved-tokens.json` and re-authenticating
-   
-4. TypeScript Build Errors
-   - Make sure all dependencies are installed: `npm install`
-   - Check your Node.js version matches prerequisites
-   - Clear the build directory: `rm -rf build/`
-
-5. Image Processing Issues
-   - Verify the image format is supported
-   - Ensure the image contains clear, readable text
+| Issue                        | Solution |
+|------------------------------|-------------|
+| OAuth token expires after 7 days | You must **re-authenticate** if the app is in testing mode. |
+| OAuth token errors | Ensure `gcp-oauth.keys.json` is formatted correctly. |
+| TypeScript build errors | Run `npm install` and `npm run build`. |
+| Image processing issues | Ensure the image format is **PNG, JPEG, or GIF**. |
 
 ## Security Notes
 
-- The server runs locally and requires OAuth authentication
-- OAuth credentials should be stored in `gcp-oauth.keys.json` in the project root
-- Authentication tokens are stored in `.gcp-saved-tokens.json` with restricted file permissions
-- Tokens are automatically refreshed when expired
-- Never commit your OAuth credentials or token files to version control
-- For production use, get your OAuth application verified by Google
+- The server runs **locally** and requires **OAuth authentication**.
+- OAuth credentials must be stored in `gcp-oauth.keys.json` in the project root.
+- **Tokens refresh automatically** when expired.
+- **DO NOT** commit credentials or tokens to version control.
+- For **production use**, get your OAuth app verified by Google.
 
 ## License
 
-MIT
+This project is licensed under the **MIT License**. See the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Want to contribute?
+
+1. Fork the repository.
+2. Create a new branch:
+   ```sh
+   git checkout -b feature-branch
+   ```
+3. Make changes & commit:
+   ```sh
+   git commit -m "Added new feature"
+   ```
+4. Push and open a **pull request**:
+   ```sh
+   git push origin feature-branch
+   ```
+
+## Attribution
+
+This project is a fork of the original **[nspady/google-calendar-mcp](https://github.com/nspady/google-calendar-mcp)** repository.
+
+## Stay Updated
+
+🔗 **[GitHub: pashpashpash/google-calendar-mcp](https://github.com/pashpashpash/google-calendar-mcp)**
+
+---
+
+### TL;DR Setup
+```sh
+git clone https://github.com/pashpashpash/google-calendar-mcp.git
+cd google-calendar-mcp
+npm install
+npm run build
+node build/index.js
+```
+Then **connect your Notion integration and you're good to go! 🚀**
