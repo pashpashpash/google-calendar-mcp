@@ -9,7 +9,7 @@ This is a Model Context Protocol (MCP) server that provides integration with Goo
 - Create new calendar events
 - Update existing events
 - Delete events
-- Process events from screenshots and images
+- Process events from screenshots and images 
 
 ## Requirements
 
