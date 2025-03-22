@@ -518,7 +518,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 function getKeysFilePath(): string {
-  return '/Users/kirniy/google-calendar-mcp/gcp-oauth.keys.json';
+  const relativePath = path.join(
+    path.dirname(new URL(import.meta.url).pathname),
+    '../gcp-oauth.keys.json'
+  );
+  const absolutePath = path.resolve(relativePath);
+  return absolutePath;
 }
 
 // Start the server
